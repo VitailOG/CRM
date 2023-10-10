@@ -1,0 +1,47 @@
+version: "3.8"
+
+x-default: &default
+  env_file:
+    - .env
+
+services:
+  backend:
+    <<: *default
+    build: .
+    container_name: backend
+    command: >
+      sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  db:
+    <<: *default
+    image: postgres:15-alpine
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  celery_worker:
+    <<: *default
+    build: .
+    container_name: worker
+    command: celery -A djangoTest worker --loglevel=info
+    depends_on:
+      - redis
+
+volumes:
+  postgresql_data:
