@@ -20,10 +20,6 @@ services:
     image: postgres:15-alpine
     container_name: db
     restart: always
-    environment:
-      POSTGRES_DB: test_db
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: pass
     volumes:
       - postgresql_data:/var/lib/postgresql/data/
     ports:
