@@ -30,7 +30,7 @@ class CallbackAPI(APIView):
         db_manager = DBManager()
         user = db_manager.create_user(ms_manager.get_user())
 
-        # logger.debug("User %s created" % user.username, extra={"": user.is_staff})
+        logger.debug("User %s created" % user.username, extra={"is_staff": user.is_staff})
 
         db_manager.create_token(credentials_dict | {"user_id": user.id})
         return Response({
